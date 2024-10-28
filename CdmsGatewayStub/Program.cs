@@ -25,8 +25,8 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
 {
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddIniFile("Properties/local.env", true);
-    builder.Services.AddMvc().AddXmlDataContractSerializerFormatters();
-    
+    builder.Services.AddMvc().AddMvcOptions(options => options.InputFormatters.Clear());
+
     ConfigureLogging(builder);
 
     ConfigureEndpoints(builder);
