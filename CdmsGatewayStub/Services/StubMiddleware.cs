@@ -2,12 +2,13 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using CdmsGatewayStub.Utils;
+using ILogger = Serilog.ILogger;
 
 namespace CdmsGatewayStub.Services;
 
 public class StubMiddleware(RequestDelegate next, IStubActions stubActions)
 {
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ILogger logger)
     {
         if (context.Request.Method != HttpMethod.Post.ToString())
         {
@@ -15,9 +16,10 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions)
             return;
         }
 
-        Console.WriteLine($"{context.Request.Headers["x-correlation-id"]} {context.Request.HttpString()}");
+        var correlationId = context.Request.Headers["x-correlation-id"];
+        logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
         var delay = await stubActions.AddDelay();
-        Console.WriteLine($"Delay for {delay.TotalMilliseconds:#,##0} milliseconds");
+        logger.Information("{CorrelationId} Delay for {DelayTotalMilliseconds} milliseconds", correlationId, delay.TotalMilliseconds);
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.ContentType = MediaTypeNames.Application.Soap;

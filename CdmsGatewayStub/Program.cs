@@ -45,6 +45,7 @@ static void ConfigureLogging(WebApplicationBuilder builder)
         .Enrich.With<LogLevelMapper>()
         .CreateLogger();
     builder.Logging.AddSerilog(logger);
+    builder.Services.AddSingleton(logger);
     logger.Information("Starting application");
 }
 
