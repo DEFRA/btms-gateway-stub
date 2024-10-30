@@ -5,7 +5,7 @@ using CdmsGatewayStub.Utils;
 
 namespace CdmsGatewayStub.Services;
 
-public class StubMiddleware(RequestDelegate next)
+public class StubMiddleware(RequestDelegate next, IStubActions stubActions)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -16,6 +16,8 @@ public class StubMiddleware(RequestDelegate next)
         }
 
         Console.WriteLine($"{context.Request.Headers["x-correlation-id"]} {context.Request.HttpString()}");
+        var delay = await stubActions.AddDelay();
+        Console.WriteLine($"Delay for {delay.TotalMilliseconds:#,##0} milliseconds");
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.ContentType = MediaTypeNames.Application.Soap;

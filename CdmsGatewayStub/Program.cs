@@ -2,6 +2,7 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
+using CdmsGatewayStub.Utils;
 
 //-------- Configure the WebApplication builder------------------//
 
@@ -25,6 +26,10 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
 {
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddIniFile("Properties/local.env", true);
+
+    builder.ConfigureToType<StubDelaysConfig>("StubDelays");
+
+    builder.Services.AddSingleton<IStubActions, StubActions>();
 
     ConfigureLogging(builder);
 
