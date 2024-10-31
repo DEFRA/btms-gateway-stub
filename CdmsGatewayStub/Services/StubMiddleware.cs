@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Mime;
 using System.Text;
 using CdmsGatewayStub.Utils;
 using ILogger = Serilog.ILogger;
@@ -22,7 +21,9 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions)
         logger.Information("{CorrelationId} Delay for {DelayTotalMilliseconds} milliseconds", correlationId, delay.TotalMilliseconds);
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
-        context.Response.ContentType = MediaTypeNames.Application.Soap;
+        context.Response.ContentType = context.Request.ContentType;
+        context.Response.Headers.Date = context.Request.Headers.Date;
+        context.Response.Headers["Authorization"] = context.Request.Headers.Authorization;
         var content = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(ResponseContent));
         await context.Response.BodyWriter.WriteAsync(content);
     }
