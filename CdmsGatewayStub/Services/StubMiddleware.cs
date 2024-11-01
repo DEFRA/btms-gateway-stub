@@ -5,9 +5,9 @@ using ILogger = Serilog.ILogger;
 
 namespace CdmsGatewayStub.Services;
 
-public class StubMiddleware(RequestDelegate next, IStubActions stubActions)
+public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILogger logger)
 {
-    public async Task InvokeAsync(HttpContext context, ILogger logger)
+    public async Task InvokeAsync(HttpContext context)
     {
         if (context.Request.Method != HttpMethod.Post.ToString())
         {

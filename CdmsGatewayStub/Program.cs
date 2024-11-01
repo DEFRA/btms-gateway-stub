@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
 using CdmsGatewayStub.Utils;
+using ILogger = Serilog.ILogger;
 
 //-------- Configure the WebApplication builder------------------//
 
@@ -45,7 +46,7 @@ static void ConfigureLogging(WebApplicationBuilder builder)
         .Enrich.With<LogLevelMapper>()
         .CreateLogger();
     builder.Logging.AddSerilog(logger);
-    builder.Services.AddSingleton(logger);
+    builder.Services.AddSingleton<ILogger>(logger);
     logger.Information("Starting application");
 }
 
