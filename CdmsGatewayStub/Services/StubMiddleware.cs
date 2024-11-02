@@ -7,6 +7,8 @@ namespace CdmsGatewayStub.Services;
 
 public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILogger logger)
 {
+    private const string CorrelationIdName = "correlation-id";
+
     public async Task InvokeAsync(HttpContext context)
     {
         if (context.Request.Method == HttpMethods.Get && context.Request.Path.HasValue && context.Request.Path.Value.Trim('/').ToLower() == "health")
@@ -15,7 +17,7 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
             return;
         }
 
-        var correlationId = context.Request.Headers["x-correlation-id"];
+        var correlationId = context.Request.Headers[CorrelationIdName];
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
         var delay = await stubActions.AddDelay();
         logger.Information("{CorrelationId} Delay for {DelayTotalMilliseconds} milliseconds", correlationId, delay.TotalMilliseconds);
