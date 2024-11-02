@@ -9,7 +9,7 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Method != HttpMethod.Post.ToString())
+        if (context.Request.Method == HttpMethods.Get && context.Request.Path.HasValue && context.Request.Path.Value.Trim('/').ToLower() == "health")
         {
             await next(context);
             return;
