@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Mime;
 using System.Text;
 using CdmsGatewayStub.Utils;
 using ILogger = Serilog.ILogger;
@@ -24,18 +25,23 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.ContentType = context.Request.ContentType;
-        context.Response.Headers.Date = context.Request.Headers.Date;
-        context.Response.Headers["Authorization"] = context.Request.Headers.Authorization;
-        var content = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(ResponseContent));
-        await context.Response.BodyWriter.WriteAsync(content);
+        context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+        var content = context.Request.ContentType?.StartsWith(MediaTypeNames.Application.Json) == true ? ResponseJsonContent : ResponseXmlContent;
+        await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
     }
 
-    private const string ResponseContent = """
+    private const string ResponseXmlContent = """
 <?xml version="1.0" encoding="utf-16" standalone="no"?>
 <Envelope xmlns="http://www.w3.org/2003/05/soap-envelope/" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
     <Body>
         <Response xmlns="http://example.com/"/>
     </Body>
 </Envelope>
+""";
+
+    private const string ResponseJsonContent = """
+{
+  "Response": 0
+}
 """;
 }
