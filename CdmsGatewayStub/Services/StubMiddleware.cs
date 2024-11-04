@@ -24,9 +24,14 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
         logger.Information("{CorrelationId} Delay for {DelayTotalMilliseconds} milliseconds", correlationId, delay.TotalMilliseconds);
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
-        context.Response.ContentType = context.Request.ContentType;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
-        var content = context.Request.ContentType?.StartsWith(MediaTypeNames.Application.Json) == true ? ResponseJsonContent : ResponseXmlContent;
+        
+        var contentType = context.Request.ContentType ?? "";
+        context.Response.ContentType = contentType;
+        var content = contentType.StartsWith(MediaTypeNames.Application.Json) ? ResponseJsonContent : 
+                      contentType.StartsWith(MediaTypeNames.Application.Soap) || contentType.StartsWith(MediaTypeNames.Application.Xml) ? ResponseXmlContent : 
+                      contentType.StartsWith(MediaTypeNames.Text.Plain) ? ResponseTextContent : string.Empty;
+        
         await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
     }
 
@@ -43,5 +48,9 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
 {
   "Response": 0
 }
+""";
+
+    private const string ResponseTextContent = """
+Working
 """;
 }
