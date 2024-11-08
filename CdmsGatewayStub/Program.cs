@@ -3,7 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
 using CdmsGatewayStub.Utils;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using ILogger = Serilog.ILogger;
+using Serilog;
+using Serilog.Core;
 
 //-------- Configure the WebApplication builder------------------//
 
@@ -33,7 +38,25 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IStubActions, StubActions>();
 
     ConfigureLogging(builder);
+    
+    //OTEL
 
+    builder.Services.AddOpenTelemetry()
+        .WithMetrics(metrics =>
+        {
+            metrics.AddRuntimeInstrumentation()
+                .AddMeter(
+                    "Microsoft.AspNetCore.Hosting",
+                    "Microsoft.AspNetCore.Server.Kestrel",
+                    "System.Net.Http");
+        })
+        .WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation();
+        })
+        .UseOtlpExporter();
+    
     ConfigureEndpoints(builder);
 }
 
@@ -44,6 +67,11 @@ static void ConfigureLogging(WebApplicationBuilder builder)
     var logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.With<LogLevelMapper>()
+        .WriteTo.OpenTelemetry(options =>
+        {
+            options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+            options.ResourceAttributes.Add("service.name", "cdms-gateway");
+        })
         .CreateLogger();
     builder.Logging.AddSerilog(logger);
     builder.Services.AddSingleton<ILogger>(logger);
