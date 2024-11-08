@@ -8,7 +8,7 @@ namespace CdmsGatewayStub.Services;
 
 public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILogger logger)
 {
-    private const string CorrelationIdName = "correlation-id";
+    private const string CorrelationIdName = "X-Correlation-ID";
 
     public async Task InvokeAsync(HttpContext context)
     {
