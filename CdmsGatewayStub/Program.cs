@@ -3,9 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
 using CdmsGatewayStub.Utils;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using ILogger = Serilog.ILogger;
-
-//-------- Configure the WebApplication builder------------------//
 
 var app = CreateWebApplication(args);
 await app.RunAsync();
@@ -27,6 +28,23 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
 {
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddIniFile("Properties/local.env", true);
+
+    //OTEL
+    builder.Services.AddOpenTelemetry()
+        .WithMetrics(metrics =>
+        {
+            metrics.AddRuntimeInstrumentation()
+                .AddMeter(
+                    "Microsoft.AspNetCore.Hosting",
+                    "Microsoft.AspNetCore.Server.Kestrel",
+                    "System.Net.Http");
+        })
+        .WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation();
+        })
+        .UseOtlpExporter();
 
     builder.ConfigureToType<StubDelaysConfig>("StubDelays");
 
