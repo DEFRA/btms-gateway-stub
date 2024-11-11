@@ -29,20 +29,19 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddIniFile("Properties/local.env", true);
 
-    //OTEL
     builder.Services.AddOpenTelemetry()
         .WithMetrics(metrics =>
         {
             metrics.AddRuntimeInstrumentation()
-                .AddMeter(
-                    "Microsoft.AspNetCore.Hosting",
-                    "Microsoft.AspNetCore.Server.Kestrel",
-                    "System.Net.Http");
+                   .AddMeter(
+                       "Microsoft.AspNetCore.Hosting",
+                       "Microsoft.AspNetCore.Server.Kestrel",
+                       "System.Net.Http");
         })
         .WithTracing(tracing =>
         {
             tracing.AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation();
+                   .AddHttpClientInstrumentation();
         })
         .UseOtlpExporter();
 
@@ -62,9 +61,13 @@ static void ConfigureLogging(WebApplicationBuilder builder)
     var logger = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
         .Enrich.With<LogLevelMapper>()
+        .WriteTo.OpenTelemetry(options =>
+        {
+            options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+            options.ResourceAttributes.Add("service.name", "cdms-gateway-stub");
+        })
         .CreateLogger();
     builder.Logging.AddSerilog(logger);
-    builder.Services.AddSingleton<ILogger>(logger);
     logger.Information("Starting application");
 }
 
