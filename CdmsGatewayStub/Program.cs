@@ -6,7 +6,6 @@ using CdmsGatewayStub.Utils;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using ILogger = Serilog.ILogger;
 
 var app = CreateWebApplication(args);
 await app.RunAsync();
@@ -50,7 +49,25 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IStubActions, StubActions>();
 
     ConfigureLogging(builder);
+    
+    //OTEL
 
+    builder.Services.AddOpenTelemetry()
+        .WithMetrics(metrics =>
+        {
+            metrics.AddRuntimeInstrumentation()
+                .AddMeter(
+                    "Microsoft.AspNetCore.Hosting",
+                    "Microsoft.AspNetCore.Server.Kestrel",
+                    "System.Net.Http");
+        })
+        .WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation();
+        })
+        .UseOtlpExporter();
+    
     ConfigureEndpoints(builder);
 }
 
