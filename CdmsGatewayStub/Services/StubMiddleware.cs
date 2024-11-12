@@ -7,7 +7,7 @@ using ILogger = Serilog.ILogger;
 
 namespace CdmsGatewayStub.Services;
 
-public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILogger logger)
+public class StubMiddleware(RequestDelegate next, ILogger logger)
 {
     private const string CorrelationIdName = "X-Correlation-ID";
 
@@ -21,8 +21,6 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
 
         var correlationId = context.Request.Headers[CorrelationIdName];
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
-        var delay = await stubActions.AddDelay();
-        logger.Information("{CorrelationId} Delay for {DelayTotalMilliseconds} milliseconds", correlationId, delay.TotalMilliseconds);
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");

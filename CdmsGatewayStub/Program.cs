@@ -45,10 +45,6 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
         })
         .UseOtlpExporter();
 
-    builder.ConfigureToType<StubDelaysConfig>("StubDelays");
-
-    builder.Services.AddSingleton<IStubActions, StubActions>();
-
     ConfigureLogging(builder);
     
     ConfigureEndpoints(builder);
