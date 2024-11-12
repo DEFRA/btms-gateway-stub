@@ -2,7 +2,6 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
-using CdmsGatewayStub.Utils;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
