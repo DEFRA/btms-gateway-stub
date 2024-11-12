@@ -9,7 +9,7 @@ namespace CdmsGatewayStub.Services;
 
 public class StubMiddleware(RequestDelegate next, ILogger logger)
 {
-    private const string CorrelationIdName = "X-Correlation-ID";
+    private const string CorrelationIdHeaderName = "X-Correlation-ID";
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -19,7 +19,7 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
             return;
         }
 
-        var correlationId = context.Request.Headers[CorrelationIdName];
+        var correlationId = context.Request.Headers[CorrelationIdHeaderName];
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
