@@ -7,10 +7,6 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using ILogger = Serilog.ILogger;
-using Serilog;
-using Serilog.Core;
-
-//-------- Configure the WebApplication builder------------------//
 
 var app = CreateWebApplication(args);
 await app.RunAsync();
@@ -33,29 +29,27 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
     builder.Configuration.AddEnvironmentVariables();
     builder.Configuration.AddIniFile("Properties/local.env", true);
 
+    builder.Services.AddOpenTelemetry()
+        .WithMetrics(metrics =>
+        {
+            metrics.AddRuntimeInstrumentation()
+                   .AddMeter(
+                       "Microsoft.AspNetCore.Hosting",
+                       "Microsoft.AspNetCore.Server.Kestrel",
+                       "System.Net.Http");
+        })
+        .WithTracing(tracing =>
+        {
+            tracing.AddAspNetCoreInstrumentation()
+                   .AddHttpClientInstrumentation();
+        })
+        .UseOtlpExporter();
+
     builder.ConfigureToType<StubDelaysConfig>("StubDelays");
 
     builder.Services.AddSingleton<IStubActions, StubActions>();
 
     ConfigureLogging(builder);
-    
-    //OTEL
-
-    builder.Services.AddOpenTelemetry()
-        .WithMetrics(metrics =>
-        {
-            metrics.AddRuntimeInstrumentation()
-                .AddMeter(
-                    "Microsoft.AspNetCore.Hosting",
-                    "Microsoft.AspNetCore.Server.Kestrel",
-                    "System.Net.Http");
-        })
-        .WithTracing(tracing =>
-        {
-            tracing.AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation();
-        })
-        .UseOtlpExporter();
     
     ConfigureEndpoints(builder);
 }
@@ -70,7 +64,7 @@ static void ConfigureLogging(WebApplicationBuilder builder)
         .WriteTo.OpenTelemetry(options =>
         {
             options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-            options.ResourceAttributes.Add("service.name", "cdms-gateway");
+            options.ResourceAttributes.Add("service.name", "cdms-gateway-stub");
         })
         .CreateLogger();
     builder.Logging.AddSerilog(logger);

@@ -2,13 +2,14 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using CdmsGatewayStub.Utils;
+using Microsoft.Extensions.Primitives;
 using ILogger = Serilog.ILogger;
 
 namespace CdmsGatewayStub.Services;
 
 public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILogger logger)
 {
-    private const string CorrelationIdName = "correlation-id";
+    private const string CorrelationIdName = "X-Correlation-ID";
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -25,6 +26,7 @@ public class StubMiddleware(RequestDelegate next, IStubActions stubActions, ILog
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+        context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
         
         var contentType = context.Request.ContentType ?? "";
         context.Response.ContentType = contentType;

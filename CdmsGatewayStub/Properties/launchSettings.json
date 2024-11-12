@@ -7,6 +7,7 @@
       "applicationUrl": "http://cdms-gateway-stub.localtest.me:3092",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
+        "DMP_ENVIRONMENT": "dev",
         "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:18889",
         "OTEL_SERVICE_NAME": "cdms-gateway-stub"
       }
