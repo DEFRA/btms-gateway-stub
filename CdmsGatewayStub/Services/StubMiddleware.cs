@@ -19,7 +19,7 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
             return;
         }
 
-        var correlationId = context.Request.Headers[CorrelationIdHeaderName];
+        var correlationId = context.Request.Headers[CorrelationIdHeaderName].FirstOrDefault();
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
