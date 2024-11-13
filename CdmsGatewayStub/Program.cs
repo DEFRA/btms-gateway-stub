@@ -53,15 +53,16 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
 static void ConfigureLogging(WebApplicationBuilder builder)
 {
     builder.Logging.ClearProviders();
-    var logger = new LoggerConfiguration()
+    var loggerConfiguration = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
-        .Enrich.With<LogLevelMapper>()
-        .WriteTo.OpenTelemetry(options =>
+        .Enrich.With<LogLevelMapper>();
+    if (builder.Environment.IsDevelopment())
+        loggerConfiguration.WriteTo.OpenTelemetry(options =>
         {
             options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
             options.ResourceAttributes.Add("service.name", "cdms-gateway-stub");
-        })
-        .CreateLogger();
+        });
+    var logger = loggerConfiguration.CreateLogger();
     builder.Logging.AddSerilog(logger);
     builder.Services.AddSingleton<ILogger>(logger);
     logger.Information("Starting application");
