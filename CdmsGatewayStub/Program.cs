@@ -2,9 +2,11 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using CdmsGatewayStub.Utils.Logging;
 using CdmsGatewayStub.Services;
+using CdmsGatewayStub.Utils;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Serilog.Core;
 using ILogger = Serilog.ILogger;
 
 var app = CreateWebApplication(args);
@@ -44,13 +46,16 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
         })
         .UseOtlpExporter();
 
-    ConfigureLogging(builder);
+    var logger = ConfigureLogging(builder);
     
+    // Load certificates into Trust Store - Note must happen before Mongo and Http client connections
+    builder.Services.AddCustomTrustStore(logger);
+
     ConfigureEndpoints(builder);
 }
 
 [ExcludeFromCodeCoverage]
-static void ConfigureLogging(WebApplicationBuilder builder)
+static Logger ConfigureLogging(WebApplicationBuilder builder)
 {
     builder.Logging.ClearProviders();
     var loggerConfiguration = new LoggerConfiguration()
@@ -67,6 +72,7 @@ static void ConfigureLogging(WebApplicationBuilder builder)
     builder.Logging.AddSerilog(logger);
     builder.Services.AddSingleton<ILogger>(logger);
     logger.Information("Starting application");
+    return logger;
 }
 
 [ExcludeFromCodeCoverage]
