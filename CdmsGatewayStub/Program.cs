@@ -55,7 +55,8 @@ static void ConfigureLogging(WebApplicationBuilder builder)
     builder.Logging.ClearProviders();
     var loggerConfiguration = new LoggerConfiguration()
         .ReadFrom.Configuration(builder.Configuration)
-        .Enrich.With<LogLevelMapper>();
+        .Enrich.With<LogLevelMapper>()
+        .Enrich.WithProperty("service.version", Environment.GetEnvironmentVariable("SERVICE_VERSION"));
     if (builder.Environment.IsDevelopment())
         loggerConfiguration.WriteTo.OpenTelemetry(options =>
         {
