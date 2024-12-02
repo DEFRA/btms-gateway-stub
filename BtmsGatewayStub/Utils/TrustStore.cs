@@ -1,8 +1,8 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Serilog.Core;
-using System.Diagnostics.CodeAnalysis;
 
 namespace BtmsGatewayStub.Utils;
 
@@ -23,7 +23,7 @@ public static class TrustStore
             .Select(entry =>
             {
                 var data = Convert.FromBase64String(entry.Value!.ToString() ?? "");
-                logger.Information($"{entry.Key} certificate decoded");
+                logger.Information("{EntryKey} certificate decoded", entry.Key);
                 return Encoding.UTF8.GetString(data);
             }).ToList();
     }

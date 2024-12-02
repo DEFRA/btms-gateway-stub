@@ -28,6 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BtmsGatewayStub\BtmsGatewayStub.csproj"/>
+    <ProjectReference Include="..\BtmsGatewayStub\BtmsGatewayStub.csproj" />
   </ItemGroup>
 </Project>
