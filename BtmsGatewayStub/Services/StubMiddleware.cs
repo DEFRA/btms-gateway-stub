@@ -21,6 +21,11 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
 
         var correlationId = context.Request.Headers[CorrelationIdHeaderName].FirstOrDefault();
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
+        
+        context.Request.EnableBuffering();
+        var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
+        context.Request.Body.Position = 0;
+        logger.Information("{CorrelationId} {Content}", correlationId, requestContent);
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
