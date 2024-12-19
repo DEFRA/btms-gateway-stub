@@ -21,11 +21,18 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
 
         var correlationId = context.Request.Headers[CorrelationIdHeaderName].FirstOrDefault();
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
-        
-        context.Request.EnableBuffering();
-        var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
-        context.Request.Body.Position = 0;
-        logger.Information("{CorrelationId} {Content}", correlationId, requestContent);
+
+        try
+        {
+            context.Request.EnableBuffering();
+            var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            context.Request.Body.Position = 0;
+            logger.Information("{CorrelationId} {Content}", correlationId, requestContent);
+        }
+        catch (Exception ex)
+        {
+            logger.Warning(ex, "Unable to extract content from request");
+        }
 
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
