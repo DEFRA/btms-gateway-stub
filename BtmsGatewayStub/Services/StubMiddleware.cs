@@ -48,12 +48,16 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
     }
 
     private const string ResponseXmlContent = """
-<?xml version="1.0" encoding="utf-16" standalone="no"?>
-<Envelope xmlns="http://www.w3.org/2003/05/soap-envelope/" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-    <Body>
-        <Response xmlns="http://example.com/"/>
-    </Body>
-</Envelope>
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+    <soapenv:Body>
+        <ALVSClearanceResponse xmlns="http://submitimportdocumenthmrcfacade.types.esb.ws.cara.defra.com"
+                               xmlns:ns2="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                               xmlns:ns3="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <StatusCode>000</StatusCode>
+        </ALVSClearanceResponse>
+    </soapenv:Body>
+</soapenv:Envelope>
 """;
 
     private const string ResponseJsonContent = """
