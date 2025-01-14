@@ -37,8 +37,9 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
         context.Response.StatusCode = (int)HttpStatusCode.OK;
         context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
         context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
-        
-        var contentType = context.Request.ContentType ?? "";
+
+        var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
+        var contentType = accept ?? context.Request.ContentType ?? "";
         context.Response.ContentType = contentType;
         var content = contentType.StartsWith(MediaTypeNames.Application.Json) ? ResponseJsonContent : 
                       contentType.StartsWith(MediaTypeNames.Application.Soap) || contentType.StartsWith(MediaTypeNames.Application.Xml) ? ResponseXmlContent : 
@@ -62,7 +63,7 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
 
     private const string ResponseJsonContent = """
 {
-  "Response": 0
+  "StatusCode": "000"
 }
 """;
 
