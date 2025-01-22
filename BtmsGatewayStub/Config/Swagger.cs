@@ -4,9 +4,10 @@ using Microsoft.OpenApi.Models;
 
 namespace BtmsGatewayStub.Config;
 
+
+[ExcludeFromCodeCoverage]
 public static class Swagger
 {
-    [ExcludeFromCodeCoverage]
     public static void ConfigureSwaggerBuilder(this WebApplicationBuilder builder)
     {
         if (builder.IsSwaggerEnabled())
@@ -20,7 +21,6 @@ public static class Swagger
         }
     }
 
-    [ExcludeFromCodeCoverage]
     public static void ConfigureSwaggerApp(this WebApplication app)
     {
         if (app.IsSwaggerEnabled())
@@ -34,9 +34,7 @@ public static class Swagger
         }
     }
     
-    [ExcludeFromCodeCoverage]
     private static bool IsSwaggerEnabled(this WebApplicationBuilder builder) => builder.IsDevMode() || builder.Configuration.GetValue<bool>("EnableSwagger");
     
-    [ExcludeFromCodeCoverage]
     private static bool IsSwaggerEnabled(this WebApplication app) => app.IsDevMode() || app.Configuration.GetValue<bool>("EnableSwagger");
 }
