@@ -48,10 +48,10 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
         await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
     }
 
-    private bool ShouldProcessRequest(HttpRequest request) => !(request.Path.Value is { } path
-                                                               && (path.StartsWith("/health", StringComparison.InvariantCultureIgnoreCase)
-                                                                   || path.StartsWith("/swagger", StringComparison.InvariantCultureIgnoreCase)
-                                                                   || path.StartsWith($"/{AlvsEndpoints.Path}", StringComparison.InvariantCultureIgnoreCase)));
+    private static bool ShouldProcessRequest(HttpRequest request) => !(request.Path.Value is { } path
+                                                                       && (path.StartsWith("/health", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith("/swagger", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith($"/{AlvsEndpoints.Path}", StringComparison.InvariantCultureIgnoreCase)));
 
     private const string ResponseXmlContent = """
 <?xml version="1.0" encoding="utf-8"?>
