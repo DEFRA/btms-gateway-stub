@@ -4,9 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using BtmsGatewayStub.Config;
 using BtmsGatewayStub.Services;
 using BtmsGatewayStub.Utils;
+using BtmsGatewayStub.Utils.Http;
 using BtmsGatewayStub.Utils.Logging;
-using Microsoft.OpenApi.Models;
 using Environment = System.Environment;
+using ILogger = Serilog.ILogger;
 
 var app = CreateWebApplication(args);
 await app.RunAsync();
@@ -24,8 +25,7 @@ static WebApplication CreateWebApplication(string[] args)
 
     app.UseMiddleware<StubMiddleware>();
     app.MapHealthChecks("/health");
-    app.UseAlvsEndpoints();
-
+    app.UseMvc();
     app.ConfigureSwaggerApp();
 
     return app;
@@ -39,9 +39,15 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
 
     var logger = ConfigureLogging(builder);
 
+    builder.Services.AddControllers(options =>
+    {
+        options.EnableEndpointRouting = false;
+        options.InputFormatters.Add(new PlainTextFormatter());
+    });
     builder.Services.AddCustomTrustStore(logger);
     builder.Services.AddHealthChecks();
-    builder.AddServices(logger);
+    builder.Services.AddSingleton<ILogger>(logger);
+    builder.Services.AddHttpProxyClient(logger);
 }
 
 [ExcludeFromCodeCoverage]

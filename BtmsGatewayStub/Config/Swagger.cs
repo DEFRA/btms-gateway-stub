@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BtmsGatewayStub.Utils;
 using Microsoft.OpenApi.Models;
 
 namespace BtmsGatewayStub.Config;
@@ -11,7 +12,11 @@ public static class Swagger
         if (builder.IsSwaggerEnabled())
         {
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c => { c.SwaggerDoc("public-v0.1", new OpenApiInfo { Title = "Public API", Version = "v1" }); });
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("public-v0.1", new OpenApiInfo { Title = "Public API", Version = "v1" });
+                c.OperationFilter<AddDefaultRequestBodyOperationFilter>();
+            });
         }
     }
 
@@ -21,9 +26,10 @@ public static class Swagger
         if (app.IsSwaggerEnabled())
         {
             app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            app.UseSwaggerUI(c =>
             {
-                options.SwaggerEndpoint("/swagger/public-v0.1/swagger.json", "public");
+                c.SwaggerEndpoint("/swagger/public-v0.1/swagger.json", "public");
+                c.DisplayRequestDuration();
             });
         }
     }
