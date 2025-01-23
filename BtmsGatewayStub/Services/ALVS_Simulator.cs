@@ -3,19 +3,23 @@ using System.Text;
 using BtmsGatewayStub.Utils.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+// ReSharper disable once InconsistentNaming
 
 namespace BtmsGatewayStub.Services;
 
 [ApiController, Route(Path)]
-public class AlvsEndpoints(IHttpClientFactory httpClientFactory, IConfiguration configuration) : ControllerBase
+public class ALVS_Simulator(IHttpClientFactory httpClientFactory, IConfiguration configuration) : ControllerBase
 {   
     public const string Path = "alvs-simulator";
+    private const string TargetPath = "/ws/CDS/defra/alvsclearanceinbound/v1";
 
     private readonly string _gatewayUrl = configuration["gatewayUrl"]!;
     
     [HttpPost("decision-notification")]
     [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
-    [SwaggerOperation(summary: "Simulates sending a Decision Notification SOAP message from ALVS to CDS at https://syst32.hmrc.gov.uk/ws/CDS/defra/alvsclearanceinbound/v1")]
+    [SwaggerOperation(
+        summary: "Simulates sending a Decision Notification SOAP message from ALVS to CDS",
+        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{TargetPath}")]
     public async Task<ActionResult> SendDecisionNotification([FromBody] string content)
     {
         var client = httpClientFactory.CreateClient(Proxy.ProxyClient);
