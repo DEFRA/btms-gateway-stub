@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using System.Text;
 using BtmsGatewayStub.Utils.Http;
@@ -8,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace BtmsGatewayStub.Services;
 
 [ApiController, Route(Path)]
+[SuppressMessage("SonarLint", "S101", Justification = "The class name appears on the swagger UI so want it recognizable there")]
 public class CDS_Simulator(IHttpClientFactory httpClientFactory, IConfiguration configuration) : ControllerBase
 {   
     public const string Path = "cds-simulator";
