@@ -16,6 +16,7 @@ public static class Swagger
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("public-v0.1", new OpenApiInfo { Title = "Public API", Version = "v1" });
+                c.EnableAnnotations();
                 c.OperationFilter<AddDefaultRequestBodyOperationFilter>();
             });
         }

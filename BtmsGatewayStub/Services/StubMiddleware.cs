@@ -51,7 +51,8 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
     private static bool ShouldProcessRequest(HttpRequest request) => !(request.Path.Value is { } path
                                                                        && (path.StartsWith("/health", StringComparison.InvariantCultureIgnoreCase)
                                                                            || path.StartsWith("/swagger", StringComparison.InvariantCultureIgnoreCase)
-                                                                           || path.StartsWith($"/{AlvsEndpoints.Path}", StringComparison.InvariantCultureIgnoreCase)));
+                                                                           || path.StartsWith($"/{ALVS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith($"/{CDS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)));
 
     private const string ResponseXmlContent = """
 <?xml version="1.0" encoding="utf-8"?>
