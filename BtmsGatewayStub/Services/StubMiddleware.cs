@@ -13,7 +13,7 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Method == HttpMethods.Get && context.Request.Path.HasValue && context.Request.Path.Value.Trim('/').ToLower() == "health")
+        if (!ShouldProcessRequest(context.Request))
         {
             await next(context);
             return;
@@ -47,6 +47,12 @@ public class StubMiddleware(RequestDelegate next, ILogger logger)
         
         await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
     }
+
+    private static bool ShouldProcessRequest(HttpRequest request) => !(request.Path.Value is { } path
+                                                                       && (path.StartsWith("/health", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith("/swagger", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith($"/{ALVS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)
+                                                                           || path.StartsWith($"/{CDS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)));
 
     private const string ResponseXmlContent = """
 <?xml version="1.0" encoding="utf-8"?>
