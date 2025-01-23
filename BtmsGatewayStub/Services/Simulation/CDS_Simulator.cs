@@ -1,21 +1,18 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
-using System.Text;
-using BtmsGatewayStub.Utils.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 // ReSharper disable once InconsistentNaming
 
-namespace BtmsGatewayStub.Services;
+namespace BtmsGatewayStub.Services.Simulation;
 
 [ApiController, Route(Path)]
 [SuppressMessage("SonarLint", "S101", Justification = "The class name appears on the swagger UI so want it recognizable there")]
-public class CDS_Simulator(IHttpClientFactory httpClientFactory, IConfiguration configuration) : ControllerBase
+public class CDS_Simulator(Simulator simulator) : ControllerBase
 {   
     public const string Path = "cds-simulator";
-    private const string TargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
 
-    private readonly string _gatewayUrl = configuration["gatewayUrl"]!;
+    private const string TargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
     
     [HttpPost("clearance-request")]
     [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
@@ -24,8 +21,6 @@ public class CDS_Simulator(IHttpClientFactory httpClientFactory, IConfiguration 
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{TargetPath}")]
     public async Task<ActionResult> SendClearanceRequest([FromBody] string content)
     {
-        var client = httpClientFactory.CreateClient(Proxy.ProxyClient);
-        var response = await client.PostAsync($"{_gatewayUrl}/cds{TargetPath}", new StringContent(content, Encoding.UTF8, MediaTypeNames.Application.Soap));
-        return new ObjectResult(await response.Content.ReadAsStringAsync()) { StatusCode = (int)response.StatusCode };
+        return await simulator.SimulateSoapRequest($"/cds{TargetPath}", content, "SubmitImportDocumentHMRCFacadeOperation");
     }
 }

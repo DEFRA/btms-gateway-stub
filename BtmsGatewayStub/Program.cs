@@ -2,7 +2,8 @@ using Serilog;
 using Serilog.Core;
 using System.Diagnostics.CodeAnalysis;
 using BtmsGatewayStub.Config;
-using BtmsGatewayStub.Services;
+using BtmsGatewayStub.Middleware;
+using BtmsGatewayStub.Services.Simulation;
 using BtmsGatewayStub.Utils;
 using BtmsGatewayStub.Utils.Http;
 using BtmsGatewayStub.Utils.Logging;
@@ -23,7 +24,7 @@ static WebApplication CreateWebApplication(string[] args)
 
     var app = builder.Build();
 
-    app.UseMiddleware<StubMiddleware>();
+    app.UseMiddleware<StubInterceptor>();
     app.MapHealthChecks("/health");
     app.UseMvc();
     app.ConfigureSwaggerApp();
@@ -48,6 +49,7 @@ static void ConfigureWebApplication(WebApplicationBuilder builder)
     builder.Services.AddHealthChecks();
     builder.Services.AddSingleton<ILogger>(logger);
     builder.Services.AddHttpProxyClient(logger);
+    builder.Services.AddScoped<Simulator>();
 }
 
 [ExcludeFromCodeCoverage]

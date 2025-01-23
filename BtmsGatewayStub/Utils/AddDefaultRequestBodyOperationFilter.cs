@@ -1,4 +1,4 @@
-using BtmsGatewayStub.Services;
+using BtmsGatewayStub.Services.Simulation;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
