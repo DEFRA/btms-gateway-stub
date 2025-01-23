@@ -19,7 +19,7 @@ public class AlvsEndpoints(IHttpClientFactory httpClientFactory, IConfiguration 
     public async Task<ActionResult> SendDecisionNotification([FromBody] string content)
     {
         var client = httpClientFactory.CreateClient(Proxy.ProxyClient);
-        var response = await client.PostAsync($"{_gatewayUrl}/alvs-cds/ws/CDS/defra/alvsclearanceinbound/v1", new StringContent(content, Encoding.UTF8, MediaTypeNames.Application.Soap));
+        var response = await client.PostAsync($"{_gatewayUrl}/alvs_cds{TargetPath}", new StringContent(content, Encoding.UTF8, MediaTypeNames.Application.Soap));
         return new ObjectResult(await response.Content.ReadAsStringAsync()) { StatusCode = (int)response.StatusCode };
     }
 }
