@@ -1,13 +1,13 @@
-using BtmsGatewayStub.Services.Simulation;
+using BtmsGatewayStub.Services.Simulation.Endpoints;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace BtmsGatewayStub.Utils;
+namespace BtmsGatewayStub.Services.Simulation;
 
-public class AddDefaultRequestBodyOperationFilter : IOperationFilter
+public class AddDefaultExamplesToSimulatorsInSwagger : IOperationFilter
 {
-    private const string ExamplesPath = "Examples";
+    private static readonly string ExamplesPath = Path.Combine("Services", "Simulation", "Examples");
     
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {

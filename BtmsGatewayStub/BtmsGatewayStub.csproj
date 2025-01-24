@@ -32,10 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Examples\DecisionNotification.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Examples\ClearanceRequest.xml">
+    <None Update="Services\Simulation\Examples\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

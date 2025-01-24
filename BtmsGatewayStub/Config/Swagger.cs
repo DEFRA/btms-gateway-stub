@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BtmsGatewayStub.Services.Simulation;
 using BtmsGatewayStub.Utils;
 using Microsoft.OpenApi.Models;
 
@@ -17,7 +18,7 @@ public static class Swagger
             {
                 c.SwaggerDoc("public-v0.1", new OpenApiInfo { Title = "Public API", Version = "v1" });
                 c.EnableAnnotations();
-                c.OperationFilter<AddDefaultRequestBodyOperationFilter>();
+                c.OperationFilter<AddDefaultExamplesToSimulatorsInSwagger>();
             });
         }
     }

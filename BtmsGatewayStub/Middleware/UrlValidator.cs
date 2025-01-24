@@ -1,4 +1,5 @@
 using BtmsGatewayStub.Services.Simulation;
+using BtmsGatewayStub.Services.Simulation.Endpoints;
 
 namespace BtmsGatewayStub.Middleware;
 

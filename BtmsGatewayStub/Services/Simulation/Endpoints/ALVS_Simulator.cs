@@ -2,9 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+
 // ReSharper disable once InconsistentNaming
 
-namespace BtmsGatewayStub.Services.Simulation;
+namespace BtmsGatewayStub.Services.Simulation.Endpoints;
 
 [ApiController, Route(Path)]
 [SuppressMessage("SonarLint", "S101", Justification = "The class name appears on the swagger UI so want it recognizable there")]
