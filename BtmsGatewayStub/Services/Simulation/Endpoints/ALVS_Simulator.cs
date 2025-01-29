@@ -12,15 +12,26 @@ namespace BtmsGatewayStub.Services.Simulation.Endpoints;
 public class ALVS_Simulator(Simulator simulator) : ControllerBase
 {   
     public const string Path = "alvs-simulator";
-    private const string TargetPath = "/ws/CDS/defra/alvsclearanceinbound/v1";
+    private const string DecisionNotificationToCdsTargetPath = "/ws/CDS/defra/alvsclearanceinbound/v1";
+    private const string ClearanceRequestToAlvsTargetPath = "/soapsearch/vnet/sanco/traces_ws/sendALVSClearanceRequest";
     
     [HttpPost("decision-notification")]
     [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
     [SwaggerOperation(
         summary: "Simulates sending a Decision Notification SOAP message from ALVS to CDS",
-        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{TargetPath}")]
-    public async Task<ActionResult> SendDecisionNotification([FromBody] string content)
+        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{DecisionNotificationToCdsTargetPath}")]
+    public async Task<ActionResult> SendDecisionNotificationToCds([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/alvs_cds{TargetPath}", content, "alvsclearanceinbound");
+        return await simulator.SimulateSoapRequest($"/alvs_cds{DecisionNotificationToCdsTargetPath}", content);
+    }
+    
+    [HttpPost("clearance-request")]
+    [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
+    [SwaggerOperation(
+        summary: "Simulates sending a Clearance Request SOAP message from ALVS to IPAFFS",
+        description: $"Routes to IPAFFS at https://importnotification-api-static-snd.azure.defra.cloud{ClearanceRequestToAlvsTargetPath}")]
+    public async Task<ActionResult> SendClearanceRequestToIpaffs([FromBody] string content)
+    {
+        return await simulator.SimulateSoapRequest($"/alvs_ipaffs{ClearanceRequestToAlvsTargetPath}", content, contentType: MediaTypeNames.Text.Xml);
     }
 }

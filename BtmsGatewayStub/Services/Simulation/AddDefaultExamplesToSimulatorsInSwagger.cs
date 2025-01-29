@@ -15,8 +15,9 @@ public class AddDefaultExamplesToSimulatorsInSwagger : IOperationFilter
         
         operation.RequestBody.Content["text/plain"].Example = context.MethodInfo.Name switch
         {
-            nameof(ALVS_Simulator.SendDecisionNotification) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "DecisionNotification.xml"))),
-            nameof(CDS_Simulator.SendClearanceRequest) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "ClearanceRequest.xml"))),
+            nameof(ALVS_Simulator.SendDecisionNotificationToCds) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "DecisionNotification.xml"))),
+            nameof(ALVS_Simulator.SendClearanceRequestToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "AlvsClearanceRequest.xml"))),
+            nameof(CDS_Simulator.SendClearanceRequestToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "CdsClearanceRequest.xml"))),
             
             _ => new OpenApiString(string.Empty)
         };

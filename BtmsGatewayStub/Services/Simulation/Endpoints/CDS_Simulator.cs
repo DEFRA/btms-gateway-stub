@@ -12,7 +12,6 @@ namespace BtmsGatewayStub.Services.Simulation.Endpoints;
 public class CDS_Simulator(Simulator simulator) : ControllerBase
 {   
     public const string Path = "cds-simulator";
-
     private const string TargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
     
     [HttpPost("clearance-request")]
@@ -20,8 +19,8 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
     [SwaggerOperation(
         summary: "Simulates sending a Clearance Request SOAP message from CDS to ALVS",
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{TargetPath}")]
-    public async Task<ActionResult> SendClearanceRequest([FromBody] string content)
+    public async Task<ActionResult> SendClearanceRequestToAlvs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/cds{TargetPath}", content, "SubmitImportDocumentHMRCFacadeOperation");
+        return await simulator.SimulateSoapRequest($"/cds{TargetPath}", content, soapAction: "SubmitImportDocumentHMRCFacadeOperation");
     }
 }
