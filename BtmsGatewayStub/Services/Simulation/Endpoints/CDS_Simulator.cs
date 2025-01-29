@@ -8,19 +8,31 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace BtmsGatewayStub.Services.Simulation.Endpoints;
 
 [ApiController, Route(Path)]
+[Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
 [SuppressMessage("SonarLint", "S101", Justification = "The class name appears on the swagger UI so want it recognizable there")]
 public class CDS_Simulator(Simulator simulator) : ControllerBase
 {   
     public const string Path = "cds-simulator";
-    private const string TargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
     
-    [HttpPost("clearance-request")]
-    [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
+    private const string ClearanceRequestToAlvsTargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
+    
+    [HttpPost("clearance-request/to/alvs")]
     [SwaggerOperation(
         summary: "Simulates sending a Clearance Request SOAP message from CDS to ALVS",
-        description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{TargetPath}")]
+        description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{ClearanceRequestToAlvsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToAlvs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/cds{TargetPath}", content, soapAction: "SubmitImportDocumentHMRCFacadeOperation");
+        return await simulator.SimulateSoapRequest($"/cds{ClearanceRequestToAlvsTargetPath}", content, soapAction: "SubmitImportDocumentHMRCFacade");
+    }
+    
+    private const string FinalisationNotificationToAlvsTargetPath = "/ITSW/CDS/NotifyFinalisedStateCDSFacadeService";
+    
+    [HttpPost("finalisation-notification/to/alvs")]
+    [SwaggerOperation(
+        summary: "Simulates sending a Finalisation Notification SOAP message from CDS to ALVS",
+        description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{FinalisationNotificationToAlvsTargetPath}")]
+    public async Task<ActionResult> SendFinalisationNotificationToAlvs([FromBody] string content)
+    {
+        return await simulator.SimulateSoapRequest($"/cds{FinalisationNotificationToAlvsTargetPath}", content, soapAction: "NotifyFinalisedStateHMRCFacade");
     }
 }
