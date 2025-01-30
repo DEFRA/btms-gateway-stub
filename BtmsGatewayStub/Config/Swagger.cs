@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using BtmsGatewayStub.Services.Simulation;
-using BtmsGatewayStub.Utils;
 using Microsoft.OpenApi.Models;
 
 namespace BtmsGatewayStub.Config;
