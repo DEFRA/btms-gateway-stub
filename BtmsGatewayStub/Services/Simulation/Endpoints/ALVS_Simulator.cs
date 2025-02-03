@@ -22,7 +22,7 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
         description: $"Routes to CDS at https://syst32.hmrc.gov.uk{DecisionNotificationToCdsTargetPath}")]
     public async Task<ActionResult> SendDecisionNotificationToCds([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/alvs_cds{DecisionNotificationToCdsTargetPath}", content);
+        return await simulator.SimulateSoapRequest(DecisionNotificationToCdsTargetPath, content);
     }
     
     private const string ClearanceRequestToIpaffsTargetPath = "/soapsearch/vnet/sanco/traces_ws/sendALVSClearanceRequest";
@@ -33,7 +33,7 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
         description: $"Routes to IPAFFS at https://importnotification-api-static-snd.azure.defra.cloud{ClearanceRequestToIpaffsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToIpaffs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/alvs_ipaffs{ClearanceRequestToIpaffsTargetPath}", content, contentType: MediaTypeNames.Text.Xml);
+        return await simulator.SimulateSoapRequest(ClearanceRequestToIpaffsTargetPath, content, contentType: MediaTypeNames.Text.Xml);
     }
     
     private const string FinalisationNotificationToIpaffsTargetPath = "/soapsearch/vnet/sanco/traces_ws/sendFinalisationNotificationRequest";
@@ -44,6 +44,6 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
         description: $"Routes to IPAFFS at https://importnotification-api-static-snd.azure.defra.cloud{FinalisationNotificationToIpaffsTargetPath}")]
     public async Task<ActionResult> SendFinalisationNotificationToIpaffs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/alvs_ipaffs{FinalisationNotificationToIpaffsTargetPath}", content, contentType: MediaTypeNames.Text.Xml);
+        return await simulator.SimulateSoapRequest(FinalisationNotificationToIpaffsTargetPath, content, contentType: MediaTypeNames.Text.Xml);
     }
 }

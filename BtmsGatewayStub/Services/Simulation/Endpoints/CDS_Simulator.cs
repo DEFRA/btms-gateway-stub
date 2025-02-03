@@ -22,7 +22,7 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{ClearanceRequestToAlvsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToAlvs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/cds{ClearanceRequestToAlvsTargetPath}", content, soapAction: "SubmitImportDocumentHMRCFacade");
+        return await simulator.SimulateSoapRequest(ClearanceRequestToAlvsTargetPath, content, soapAction: "SubmitImportDocumentHMRCFacade");
     }
     
     private const string FinalisationNotificationToAlvsTargetPath = "/ITSW/CDS/NotifyFinalisedStateCDSFacadeService";
@@ -33,6 +33,6 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{FinalisationNotificationToAlvsTargetPath}")]
     public async Task<ActionResult> SendFinalisationNotificationToAlvs([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest($"/cds{FinalisationNotificationToAlvsTargetPath}", content, soapAction: "NotifyFinalisedStateHMRCFacade");
+        return await simulator.SimulateSoapRequest(FinalisationNotificationToAlvsTargetPath, content, soapAction: "NotifyFinalisedStateHMRCFacade");
     }
 }
