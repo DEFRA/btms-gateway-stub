@@ -35,4 +35,15 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
     {
         return await simulator.SimulateSoapRequest(FinalisationNotificationToAlvsTargetPath, content, soapAction: "NotifyFinalisedStateHMRCFacade");
     }
+    
+    private const string ErrorNotificationToAlvsTargetPath = "/ITSW/CDS/ALVSCDSErrorNotificationService";
+    
+    [HttpPost("error-notification/to/alvs")]
+    [SwaggerOperation(
+        summary: "Simulates sending a Error Notification SOAP message from CDS to ALVS",
+        description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{ErrorNotificationToAlvsTargetPath}")]
+    public async Task<ActionResult> SendErrorNotificationToAlvs([FromBody] string content)
+    {
+        return await simulator.SimulateSoapRequest(ErrorNotificationToAlvsTargetPath, content);
+    }
 }

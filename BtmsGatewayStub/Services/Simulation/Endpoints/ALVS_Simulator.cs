@@ -25,6 +25,17 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
         return await simulator.SimulateSoapRequest(DecisionNotificationToCdsTargetPath, content);
     }
     
+    private const string ErrorNotificationToCdsTargetPath = "/prsup/PRRestService/ALVS/Service/DecisionNotification";
+    
+    [HttpPost("error-notification/to/cds")]
+    [SwaggerOperation(
+        summary: "Simulates sending a Error Notification SOAP message from ALVS to CDS",
+        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{ErrorNotificationToCdsTargetPath}")]
+    public async Task<ActionResult> SendErrorNotificationToCds([FromBody] string content)
+    {
+        return await simulator.SimulateSoapRequest(ErrorNotificationToCdsTargetPath, content);
+    }
+    
     private const string ClearanceRequestToIpaffsTargetPath = "/soapsearch/vnet/sanco/traces_ws/sendALVSClearanceRequest";
     
     [HttpPost("clearance-request/to/ipaffs")]
