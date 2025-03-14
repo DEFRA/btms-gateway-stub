@@ -8,5 +8,5 @@ public static class UrlValidator
                                                                       && (path.StartsWith("/health", StringComparison.InvariantCultureIgnoreCase)
                                                                           || path.StartsWith("/swagger", StringComparison.InvariantCultureIgnoreCase)
                                                                           || path.StartsWith($"/{ALVS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)
-                                                                          || path.StartsWith($"/{CDS_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)));
+                                                                          || path.StartsWith($"/{HMRC_Simulator.Path}", StringComparison.InvariantCultureIgnoreCase)));
 }

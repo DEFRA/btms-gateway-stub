@@ -10,15 +10,15 @@ namespace BtmsGatewayStub.Services.Simulation.Endpoints;
 [ApiController, Route(Path)]
 [Consumes(MediaTypeNames.Text.Plain), Produces(MediaTypeNames.Text.Plain)]
 [SuppressMessage("SonarLint", "S101", Justification = "The class name appears on the swagger UI so want it recognizable there")]
-public class CDS_Simulator(Simulator simulator) : ControllerBase
+public class HMRC_Simulator(Simulator simulator) : ControllerBase
 {   
-    public const string Path = "cds-simulator";
+    public const string Path = "Hmrc-simulator";
     
     private const string ClearanceRequestToAlvsTargetPath = "/ITSW/CDS/SubmitImportDocumentCDSFacadeService";
     
     [HttpPost("clearance-request/to/alvs")]
     [SwaggerOperation(
-        summary: "Simulates sending a Clearance Request SOAP message from CDS to ALVS",
+        summary: "Simulates sending an AlvsClearanceRequest SOAP message from HMRC to ALVS",
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{ClearanceRequestToAlvsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToAlvs([FromBody] string content)
     {
@@ -29,7 +29,7 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
     
     [HttpPost("finalisation-notification/to/alvs")]
     [SwaggerOperation(
-        summary: "Simulates sending a Finalisation Notification SOAP message from CDS to ALVS",
+        summary: "Simulates sending a FinalisationNotificationRequest SOAP message from HMRC to ALVS",
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{FinalisationNotificationToAlvsTargetPath}")]
     public async Task<ActionResult> SendFinalisationNotificationToAlvs([FromBody] string content)
     {
@@ -40,7 +40,7 @@ public class CDS_Simulator(Simulator simulator) : ControllerBase
     
     [HttpPost("error-notification/to/alvs")]
     [SwaggerOperation(
-        summary: "Simulates sending a Error Notification SOAP message from CDS to ALVS",
+        summary: "Simulates sending an ALVSErrorNotification SOAP message from HMRC to ALVS",
         description: $"Routes to ALVS at https://t2.secure.services.defra.gsi.gov.uk{ErrorNotificationToAlvsTargetPath}")]
     public async Task<ActionResult> SendErrorNotificationToAlvs([FromBody] string content)
     {

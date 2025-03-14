@@ -16,31 +16,29 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
     
     private const string DecisionNotificationToCdsTargetPath = "/ws/CDS/defra/alvsclearanceinbound/v1";
     
-    [HttpPost("decision-notification/to/cds")]
+    [HttpPost("decision-notification/to/hmrc")]
     [SwaggerOperation(
-        summary: "Simulates sending a Decision Notification SOAP message from ALVS to CDS",
+        summary: "Simulates sending a DecisionNotification SOAP message from ALVS to HMRC",
         description: $"Routes to CDS at https://syst32.hmrc.gov.uk{DecisionNotificationToCdsTargetPath}")]
-    public async Task<ActionResult> SendDecisionNotificationToCds([FromBody] string content)
+    public async Task<ActionResult> SendDecisionNotificationToHmrc([FromBody] string content)
     {
         return await simulator.SimulateSoapRequest(DecisionNotificationToCdsTargetPath, content);
     }
     
-    private const string ErrorNotificationToCdsTargetPath = "/prsup/PRRestService/ALVS/Service/DecisionNotification";
-    
-    [HttpPost("error-notification/to/cds")]
+    [HttpPost("error-notification/to/hmrc")]
     [SwaggerOperation(
-        summary: "Simulates sending a Error Notification SOAP message from ALVS to CDS",
-        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{ErrorNotificationToCdsTargetPath}")]
-    public async Task<ActionResult> SendErrorNotificationToCds([FromBody] string content)
+        summary: "Simulates sending a HMRCErrorNotification SOAP message from ALVS to HMRC",
+        description: $"Routes to CDS at https://syst32.hmrc.gov.uk{DecisionNotificationToCdsTargetPath}")]
+    public async Task<ActionResult> SendErrorNotificationToHmrc([FromBody] string content)
     {
-        return await simulator.SimulateSoapRequest(ErrorNotificationToCdsTargetPath, content);
+        return await simulator.SimulateSoapRequest(DecisionNotificationToCdsTargetPath, content);
     }
     
     private const string ClearanceRequestToIpaffsTargetPath = "/soapsearch/tst/sanco/traces_ws/sendALVSClearanceRequest";
     
     [HttpPost("clearance-request/to/ipaffs")]
     [SwaggerOperation(
-        summary: "Simulates sending a Clearance Request SOAP message from ALVS to IPAFFS",
+        summary: "Simulates sending an ALVSClearanceRequest SOAP message from ALVS to IPAFFS",
         description: $"Routes to IPAFFS at https://importnotification-api-tst.azure.defra.cloud{ClearanceRequestToIpaffsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToIpaffs([FromBody] string content)
     {
@@ -51,7 +49,7 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
     
     [HttpPost("finalisation-notification/to/ipaffs")]
     [SwaggerOperation(
-        summary: "Simulates sending a Finalisation Notification SOAP message from ALVS to IPAFFS",
+        summary: "Simulates sending a FinalisationNotificationRequest SOAP message from ALVS to IPAFFS",
         description: $"Routes to IPAFFS at https://importnotification-api-tst.azure.defra.cloud{FinalisationNotificationToIpaffsTargetPath}")]
     public async Task<ActionResult> SendFinalisationNotificationToIpaffs([FromBody] string content)
     {

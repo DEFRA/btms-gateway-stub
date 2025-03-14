@@ -15,13 +15,13 @@ public class AddDefaultExamplesToSimulatorsInSwagger : IOperationFilter
         
         operation.RequestBody.Content["text/plain"].Example = context.MethodInfo.Name switch
         {
-            nameof(CDS_Simulator.SendClearanceRequestToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "CdsToAlvsClearanceRequest.xml"))),
-            nameof(CDS_Simulator.SendFinalisationNotificationToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "CdsToAlvsFinalisationNotification.xml"))),
-            nameof(CDS_Simulator.SendErrorNotificationToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "CdsToAlvsErrorNotification.xml"))),
-            nameof(ALVS_Simulator.SendDecisionNotificationToCds) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "AlvsToCdsDecisionNotification.xml"))),
-            nameof(ALVS_Simulator.SendErrorNotificationToCds) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "AlvsToCdsErrorNotification.xml"))),
-            nameof(ALVS_Simulator.SendClearanceRequestToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "AlvsToIpaffsClearanceRequest.xml"))),
-            nameof(ALVS_Simulator.SendFinalisationNotificationToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "AlvsToIpaffsFinalisationNotification.xml"))),
+            nameof(HMRC_Simulator.SendClearanceRequestToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "ALVSClearanceRequest_HmrcToAlvs.xml"))),
+            nameof(HMRC_Simulator.SendFinalisationNotificationToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "FinalisationNotificationRequest_HmrcToAlvs.xml"))),
+            nameof(HMRC_Simulator.SendErrorNotificationToAlvs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "ALVSErrorNotificationRequest_HmrcToAlvs.xml"))),
+            nameof(ALVS_Simulator.SendDecisionNotificationToHmrc) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "DecisionNotification_AlvsToHmrc.xml"))),
+            nameof(ALVS_Simulator.SendErrorNotificationToHmrc) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "HMRCErrorNotification_AlvsToHmrc.xml"))),
+            nameof(ALVS_Simulator.SendClearanceRequestToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "ALVSClearanceRequest_AlvsToIpaffs.xml"))),
+            nameof(ALVS_Simulator.SendFinalisationNotificationToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "FinalisationNotificationRequest_AlvsToIpaffs.xml"))),
             
             _ => new OpenApiString(string.Empty)
         };
