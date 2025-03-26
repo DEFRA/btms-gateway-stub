@@ -11,11 +11,11 @@
                 <ServiceHeader>
                     <SourceSystem>CDS</SourceSystem>
                     <DestinationSystem>ALVS</DestinationSystem>
-                    <CorrelationId>1234567890123456789</CorrelationId>
+                    <CorrelationId>1234567890123451212</CorrelationId>
                     <ServiceCallTimestamp>2008-01-01T12:12:12.123</ServiceCallTimestamp>
                 </ServiceHeader>
                 <Header>
-                    <EntryReference>ALVSCDSTEST00000000688</EntryReference>
+                    <EntryReference>ALVSCDSTEST00000000321</EntryReference>
                     <EntryVersionNumber>4</EntryVersionNumber>
                     <DecisionNumber>3</DecisionNumber>
                     <FinalState>0</FinalState>

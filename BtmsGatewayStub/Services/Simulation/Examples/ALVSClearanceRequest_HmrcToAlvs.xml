@@ -17,7 +17,7 @@
                 <ServiceCallTimestamp>2022-01-12T14:21:50.286</ServiceCallTimestamp>
             </ServiceHeader>
             <Header>
-                <EntryReference>ALVSCDSTEST00000000688</EntryReference>
+                <EntryReference>ALVSCDSTEST00000000799</EntryReference>
                 <EntryVersionNumber>3</EntryVersionNumber>
                 <PreviousVersionNumber>2</PreviousVersionNumber>
                 <DeclarationUCR>1GB116445386000-KDA35932Y1BHX</DeclarationUCR>
@@ -39,7 +39,8 @@
                 <ConsigneeName>REDACTED</ConsigneeName>
                 <ItemNetMass>5011.200</ItemNetMass>
                 <ItemOriginCountryCode>CN</ItemOriginCountryCode>
-                <Document><DocumentCode>N853</DocumentCode>
+                <Document>
+                    <DocumentCode>N853</DocumentCode>
                     <DocumentReference>GBCVD2021.1396392</DocumentReference>
                     <DocumentStatus>AE</DocumentStatus>
                     <DocumentControl>P</DocumentControl>
@@ -78,7 +79,8 @@
                 <ConsigneeName>REDACTED</ConsigneeName>
                 <ItemNetMass>144.000</ItemNetMass>
                 <ItemOriginCountryCode>CN</ItemOriginCountryCode>
-                <Document><DocumentCode>N853</DocumentCode>
+                <Document>
+                    <DocumentCode>N853</DocumentCode>
                     <DocumentReference>GBCVD2021.1396386</DocumentReference>
                     <DocumentStatus>AE</DocumentStatus>
                     <DocumentControl>P</DocumentControl>

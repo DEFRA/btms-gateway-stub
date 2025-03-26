@@ -11,7 +11,7 @@
                 <ServiceHeader>
                     <SourceSystem>CDS</SourceSystem>
                     <DestinationSystem>ALVS</DestinationSystem>
-                    <CorrelationId>193264645102865</CorrelationId>
+                    <CorrelationId>193264645102777</CorrelationId>
                     <ServiceCallTimestamp>2022-01-12T14:21:50.286</ServiceCallTimestamp>
                 </ServiceHeader>
                 <Header>
@@ -37,7 +37,8 @@
                     <ConsigneeName>REDACTED</ConsigneeName>
                     <ItemNetMass>5011.200</ItemNetMass>
                     <ItemOriginCountryCode>CN</ItemOriginCountryCode>
-                    <Document><DocumentCode>N853</DocumentCode>
+                    <Document>
+                        <DocumentCode>N853</DocumentCode>
                         <DocumentReference>GBCVD2021.1396392</DocumentReference>
                         <DocumentStatus>AE</DocumentStatus>
                         <DocumentControl>P</DocumentControl>
@@ -76,7 +77,8 @@
                     <ConsigneeName>REDACTED</ConsigneeName>
                     <ItemNetMass>144.000</ItemNetMass>
                     <ItemOriginCountryCode>CN</ItemOriginCountryCode>
-                    <Document><DocumentCode>N853</DocumentCode>
+                    <Document>
+                        <DocumentCode>N853</DocumentCode>
                         <DocumentReference>GBCVD2021.1396386</DocumentReference>
                         <DocumentStatus>AE</DocumentStatus>
                         <DocumentControl>P</DocumentControl>

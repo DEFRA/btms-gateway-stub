@@ -13,8 +13,8 @@
             <ServiceHeader>
                 <SourceSystem>CDS</SourceSystem>
                 <DestinationSystem>ALVS</DestinationSystem>
-                <CorrelationId>1234567890123456789</CorrelationId>
-                <ServiceCallTimestamp>ALVSCDSTEST00000000688</ServiceCallTimestamp>
+                <CorrelationId>1234567890123458365</CorrelationId>
+                <ServiceCallTimestamp>ALVSCDSTEST00000006655</ServiceCallTimestamp>
             </ServiceHeader>
             <Header>
                 <EntryReference>123-123456A-01/01/2008</EntryReference>
