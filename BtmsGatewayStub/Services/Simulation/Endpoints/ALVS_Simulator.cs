@@ -34,23 +34,23 @@ public class ALVS_Simulator(Simulator simulator) : ControllerBase
         return await simulator.SimulateSoapRequest(DecisionNotificationToCdsTargetPath, content);
     }
     
-    private const string ClearanceRequestToIpaffsTargetPath = "/soapsearch/tst/sanco/traces_ws/sendALVSClearanceRequest";
+    private const string ClearanceRequestToIpaffsTargetPath = "/soapsearch/pre/sanco/traces_ws/sendALVSClearanceRequest";
     
     [HttpPost("clearance-request/to/ipaffs")]
     [SwaggerOperation(
         summary: "Simulates sending an ALVSClearanceRequest SOAP message from ALVS to IPAFFS",
-        description: $"Routes to IPAFFS at https://importnotification-api-tst.azure.defra.cloud{ClearanceRequestToIpaffsTargetPath}")]
+        description: $"Routes to IPAFFS at https://importnotification-api-pre.azure.defra.cloud{ClearanceRequestToIpaffsTargetPath}")]
     public async Task<ActionResult> SendClearanceRequestToIpaffs([FromBody] string content)
     {
         return await simulator.SimulateSoapRequest(ClearanceRequestToIpaffsTargetPath, content, contentType: MediaTypeNames.Text.Xml);
     }
     
-    private const string FinalisationNotificationToIpaffsTargetPath = "/soapsearch/tst/sanco/traces_ws/sendFinalisationNotificationRequest";
+    private const string FinalisationNotificationToIpaffsTargetPath = "/soapsearch/pre/sanco/traces_ws/sendFinalisationNotificationRequest";
     
     [HttpPost("finalisation-notification/to/ipaffs")]
     [SwaggerOperation(
         summary: "Simulates sending a FinalisationNotificationRequest SOAP message from ALVS to IPAFFS",
-        description: $"Routes to IPAFFS at https://importnotification-api-tst.azure.defra.cloud{FinalisationNotificationToIpaffsTargetPath}")]
+        description: $"Routes to IPAFFS at https://importnotification-api-pre.azure.defra.cloud{FinalisationNotificationToIpaffsTargetPath}")]
     public async Task<ActionResult> SendFinalisationNotificationToIpaffs([FromBody] string content)
     {
         return await simulator.SimulateSoapRequest(FinalisationNotificationToIpaffsTargetPath, content, contentType: MediaTypeNames.Text.Xml);
