@@ -22,6 +22,9 @@ public class AddDefaultExamplesToSimulatorsInSwagger : IOperationFilter
             nameof(ALVS_Simulator.SendErrorNotificationToHmrc) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "HMRCErrorNotification_AlvsToHmrc.xml"))),
             nameof(ALVS_Simulator.SendClearanceRequestToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "ALVSClearanceRequest_AlvsToIpaffs.xml"))),
             nameof(ALVS_Simulator.SendFinalisationNotificationToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "FinalisationNotificationRequest_AlvsToIpaffs.xml"))),
+            nameof(ALVS_Simulator.SendDecisionNotificationToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "DecisionNotification_AlvsToIpaffs.xml"))),
+            nameof(ALVS_Simulator.SendSearchCertificateToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "SearchCertificateRequest_ISCToIpaffs.xml"))),
+            nameof(ALVS_Simulator.SendPollSearchCertificateResultToIpaffs) => new OpenApiString(File.ReadAllText(Path.Combine(ExamplesPath, "PollSearchCertificateResultRequest_ISCToIpaffs.xml"))),
             
             _ => new OpenApiString(string.Empty)
         };
