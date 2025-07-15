@@ -55,13 +55,28 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
             var contentType = accept ?? context.Request.ContentType ?? "";
             context.Response.ContentType = contentType;
-            var content = contentType.StartsWith(MediaTypeNames.Application.Json) ? DefaultContent.ResponseJsonContent :
-                contentType.StartsWith(MediaTypeNames.Application.Soap) ||
-                contentType.StartsWith(MediaTypeNames.Application.Xml) ? DefaultContent.ResponseXmlContent :
-                contentType.StartsWith(MediaTypeNames.Text.Plain) ? DefaultContent.ResponseTextContent : string.Empty;
+            var content = GetContent(contentType);
 
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
         }
+    }
+
+    private string GetContent(string? contentType)
+    {
+        if (string.IsNullOrEmpty(contentType))
+            return string.Empty;
+
+        if (contentType.StartsWith(MediaTypeNames.Application.Json))
+            return DefaultContent.ResponseJsonContent;
+
+        if (contentType.StartsWith(MediaTypeNames.Application.Soap) ||
+            contentType.StartsWith(MediaTypeNames.Application.Xml))
+            return DefaultContent.ResponseXmlContent;
+
+        if (contentType.StartsWith(MediaTypeNames.Text.Plain))
+            return DefaultContent.ResponseTextContent;
+        
+        return string.Empty;
     }
 
     private bool IsDecisionComparerConflictRequest(HttpContext context)
