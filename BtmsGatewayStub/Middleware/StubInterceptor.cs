@@ -61,7 +61,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
         }
     }
 
-    private string GetContent(string? contentType)
+    private static string GetContent(string? contentType)
     {
         if (string.IsNullOrEmpty(contentType))
             return string.Empty;
@@ -79,7 +79,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
         return string.Empty;
     }
 
-    private bool IsDecisionComparerConflictRequest(HttpContext context)
+    private static bool IsDecisionComparerConflictRequest(HttpContext context)
     {
         return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/409/btms-decisions/") ||
                                                  context.Request.Path.Value.StartsWith("/409/alvs-decisions/") ||
@@ -87,7 +87,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
                                                  context.Request.Path.Value.StartsWith("/409/alvs-outbound-errors/"));
     }
 
-    private bool IsDecisionComparerSuccessRequest(HttpContext context)
+    private static bool IsDecisionComparerSuccessRequest(HttpContext context)
     {
         return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/btms-decisions/") ||
                                                  context.Request.Path.Value.StartsWith("/alvs-decisions/") ||
