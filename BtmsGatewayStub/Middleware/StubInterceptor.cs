@@ -35,27 +35,16 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             logger.Warning(ex, "Unable to extract content from request");
         }
 
-        if (IsDecisionComparerConflictRequest(context))
+        if (IsDecisionComparerConflictRequest(context) || IsDecisionComparerSuccessRequest(context))
         {
-            context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            context.Response.StatusCode = IsDecisionComparerConflictRequest(context) ? (int)HttpStatusCode.Conflict : (int)HttpStatusCode.OK;
             context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
             context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
 
             var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
             var contentType = accept ?? context.Request.ContentType ?? "";
             context.Response.ContentType = contentType;
-            await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(requestContent ?? string.Empty)));
-        }
-        else if (IsDecisionComparerSuccessRequest(context))
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.OK;
-            context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
-            context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
-
-            var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
-            var contentType = accept ?? context.Request.ContentType ?? "";
-            context.Response.ContentType = contentType;
-            await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(requestContent ?? string.Empty)));
+            await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(IsDecisionComparerConflictRequest(context) ? string.Empty : requestContent ?? string.Empty)));
         }
         else
         {
