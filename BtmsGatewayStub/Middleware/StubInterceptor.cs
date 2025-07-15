@@ -35,7 +35,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             logger.Warning(ex, "Unable to extract content from request");
         }
 
-        if (context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/409/btms-decisions/") || context.Request.Path.Value.StartsWith("/409/alvs-decisions/") || context.Request.Path.Value.StartsWith("/409/btms-outbound-errors/") || context.Request.Path.Value.StartsWith("/409/alvs-outbound-errors/")))
+        if (IsDecisionComparerConflictRequest(context))
         {
             context.Response.StatusCode = (int)HttpStatusCode.Conflict;
             context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
@@ -46,7 +46,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             context.Response.ContentType = contentType;
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(requestContent ?? string.Empty)));
         }
-        else if (context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/btms-decisions/") || context.Request.Path.Value.StartsWith("/alvs-decisions/") || context.Request.Path.Value.StartsWith("/btms-outbound-errors/") || context.Request.Path.Value.StartsWith("/alvs-outbound-errors/")))
+        else if (IsDecisionComparerSuccessRequest(context))
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
             context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
@@ -73,5 +73,21 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
 
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
         }
+    }
+
+    private bool IsDecisionComparerConflictRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/409/btms-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/alvs-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/btms-outbound-errors/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/alvs-outbound-errors/"));
+    }
+
+    private bool IsDecisionComparerSuccessRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/btms-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/alvs-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/btms-outbound-errors/") ||
+                                                 context.Request.Path.Value.StartsWith("/alvs-outbound-errors/"));
     }
 }
