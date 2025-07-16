@@ -22,10 +22,11 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
         var correlationId = context.Request.Headers[CorrelationIdHeaderName].FirstOrDefault();
         logger.Information("{CorrelationId} {HttpString}", correlationId, context.Request.HttpString());
 
+        string? requestContent = null;
         try
         {
             context.Request.EnableBuffering();
-            var requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            requestContent = await new StreamReader(context.Request.Body).ReadToEndAsync();
             context.Request.Body.Position = 0;
             logger.Information("{CorrelationId} {Content}", correlationId, requestContent);
         }
@@ -34,17 +35,63 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             logger.Warning(ex, "Unable to extract content from request");
         }
 
-        context.Response.StatusCode = (int)HttpStatusCode.OK;
-        context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
-        context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
+        if (IsDecisionComparerConflictRequest(context) || IsDecisionComparerSuccessRequest(context))
+        {
+            context.Response.StatusCode = IsDecisionComparerConflictRequest(context) ? (int)HttpStatusCode.Conflict : (int)HttpStatusCode.OK;
+            context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+            context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
 
-        var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
-        var contentType = accept ?? context.Request.ContentType ?? "";
-        context.Response.ContentType = contentType;
-        var content = contentType.StartsWith(MediaTypeNames.Application.Json) ? DefaultContent.ResponseJsonContent : 
-                      contentType.StartsWith(MediaTypeNames.Application.Soap) || contentType.StartsWith(MediaTypeNames.Application.Xml) ? DefaultContent.ResponseXmlContent : 
-                      contentType.StartsWith(MediaTypeNames.Text.Plain) ? DefaultContent.ResponseTextContent : string.Empty;
+            var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
+            var contentType = accept ?? context.Request.ContentType ?? "";
+            context.Response.ContentType = contentType;
+            await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(IsDecisionComparerConflictRequest(context) ? string.Empty : requestContent ?? string.Empty)));
+        }
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+            context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+            context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
+
+            var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
+            var contentType = accept ?? context.Request.ContentType ?? "";
+            context.Response.ContentType = contentType;
+            var content = GetContent(contentType);
+
+            await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
+        }
+    }
+
+    private static string GetContent(string? contentType)
+    {
+        if (string.IsNullOrEmpty(contentType))
+            return string.Empty;
+
+        if (contentType.StartsWith(MediaTypeNames.Application.Json))
+            return DefaultContent.ResponseJsonContent;
+
+        if (contentType.StartsWith(MediaTypeNames.Application.Soap) ||
+            contentType.StartsWith(MediaTypeNames.Application.Xml))
+            return DefaultContent.ResponseXmlContent;
+
+        if (contentType.StartsWith(MediaTypeNames.Text.Plain))
+            return DefaultContent.ResponseTextContent;
         
-        await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
+        return string.Empty;
+    }
+
+    private static bool IsDecisionComparerConflictRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/409/btms-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/alvs-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/btms-outbound-errors/") ||
+                                                 context.Request.Path.Value.StartsWith("/409/alvs-outbound-errors/"));
+    }
+
+    private static bool IsDecisionComparerSuccessRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue && (context.Request.Path.Value.StartsWith("/btms-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/alvs-decisions/") ||
+                                                 context.Request.Path.Value.StartsWith("/btms-outbound-errors/") ||
+                                                 context.Request.Path.Value.StartsWith("/alvs-outbound-errors/"));
     }
 }
