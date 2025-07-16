@@ -46,6 +46,16 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             context.Response.ContentType = contentType;
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(IsDecisionComparerConflictRequest(context) ? string.Empty : requestContent ?? string.Empty)));
         }
+        else if (IsAlvsToCdsRequest(context))
+        {
+            context.Response.StatusCode = Contains503Request(requestContent) ? (int)HttpStatusCode.ServiceUnavailable : (int)HttpStatusCode.NoContent;
+            context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+            context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
+
+            var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
+            var contentType = accept ?? context.Request.ContentType ?? "";
+            context.Response.ContentType = contentType;
+        }
         else
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -59,6 +69,17 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
 
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
         }
+    }
+
+    private static bool Contains503Request(string? requestContent)
+    {
+        // Looks for a raw string containing the opening and closing of the CorrelationId element with the value 503, whilst ignoring any namespacing in the element tag
+        return requestContent?.Replace("&lt;", "<").Replace("&gt;", ">").Contains("CorrelationId>503</") ?? false;
+    }
+    
+    private static bool IsAlvsToCdsRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue && context.Request.Path.Value.StartsWith("/ws/CDS/defra/alvsclearanceinbound/v1");
     }
 
     private static string GetContent(string? contentType)
