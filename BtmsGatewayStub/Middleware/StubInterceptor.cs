@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
@@ -11,6 +12,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
 {
     private const string CorrelationIdHeaderName = "X-Correlation-ID";
 
+    [SuppressMessage("SonarLint", "S3776", Justification = "This is test code")]
     public async Task InvokeAsync(HttpContext context)
     {
         if (!UrlValidator.ShouldProcessRequest(context.Request))
