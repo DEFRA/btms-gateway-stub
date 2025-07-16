@@ -75,8 +75,8 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
 
     private static bool Contains503Request(string? requestContent)
     {
-        // Looks for a raw string containing the opening and closing of the CorrelationId element with the value 503, whilst ignoring any namespacing in the element tag
-        return requestContent?.Replace("&lt;", "<").Replace("&gt;", ">").Contains("CorrelationId>503</") ?? false;
+        // Looks for a raw string containing the opening of the CorrelationId element with the value prefix of 503, whilst ignoring any namespacing in the element tag
+        return requestContent?.Replace("&gt;", ">").Contains("CorrelationId>503") ?? false;
     }
     
     private static bool IsAlvsToCdsRequest(HttpContext context)
