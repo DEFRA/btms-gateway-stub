@@ -50,7 +50,7 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
         }
         else if (IsAlvsToCdsRequest(context))
         {
-            context.Response.StatusCode = Contains503Request(requestContent) ? (int)HttpStatusCode.ServiceUnavailable : (int)HttpStatusCode.NoContent;
+            context.Response.StatusCode = GetResponseStatusCode(requestContent);
             context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
             context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
 
@@ -71,6 +71,27 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
 
             await context.Response.BodyWriter.WriteAsync(new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(content)));
         }
+    }
+
+    private static int GetResponseStatusCode(string? requestContent)
+    {
+        if (Contains503Request(requestContent))
+        {
+            return (int)HttpStatusCode.ServiceUnavailable;
+        }
+        
+        if (Contains400Request(requestContent))
+        {
+            return (int)HttpStatusCode.BadRequest;
+        }
+
+        return (int)HttpStatusCode.NoContent;
+    }
+    
+    private static bool Contains400Request(string? requestContent)
+    {
+        // Looks for a raw string containing the opening of the CorrelationId element with the value prefix of 400, whilst ignoring any namespacing in the element tag
+        return requestContent?.Replace("&gt;", ">").Contains("CorrelationId>400") ?? false;
     }
 
     private static bool Contains503Request(string? requestContent)
