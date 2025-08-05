@@ -57,6 +57,11 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
             var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
             var contentType = accept ?? context.Request.ContentType ?? "";
             context.Response.ContentType = contentType;
+
+            if (Contains408Request(requestContent))
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(30)); // A length of time that is higher than the default timeout of 10 seconds used in the Gateway HTTP Client Proxy settings
+            }
         }
         else
         {
@@ -86,6 +91,12 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
         }
 
         return (int)HttpStatusCode.NoContent;
+    }
+    
+    private static bool Contains408Request(string? requestContent)
+    {
+        // Looks for a raw string containing the opening of the CorrelationId element with the value prefix of 408, whilst ignoring any namespacing in the element tag
+        return requestContent?.Replace("&gt;", ">").Contains("CorrelationId>408") ?? false;
     }
     
     private static bool Contains400Request(string? requestContent)
