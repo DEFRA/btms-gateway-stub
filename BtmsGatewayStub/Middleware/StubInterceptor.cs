@@ -63,6 +63,21 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
                 Thread.Sleep(TimeSpan.FromSeconds(30)); // A length of time that is higher than the default timeout of 10 seconds used in the Gateway HTTP Client Proxy settings
             }
         }
+        else if (IsAlvsIpaffsSearchRequest(context))
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.NoContent;
+            context.Response.Headers.Date = DateTimeOffset.UtcNow.ToString("R");
+            context.Response.Headers.Append("x-requested-path", new StringValues(context.Request.Path));
+
+            var accept = context.Request.Headers.Accept.Count > 0 ? context.Request.Headers.Accept[0] : null;
+            var contentType = accept ?? context.Request.ContentType ?? "";
+            context.Response.ContentType = contentType;
+
+            if (ContainsTimeoutRequest(requestContent))
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(105)); // A length of time that is higher than the default timeout of 100 seconds used in the Gateway HTTP Client Proxy settings for IPAFFS search requests
+            }
+        }
         else
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -114,6 +129,21 @@ public class StubInterceptor(RequestDelegate next, ILogger logger)
     private static bool IsAlvsToCdsRequest(HttpContext context)
     {
         return context.Request.Path.HasValue && context.Request.Path.Value.StartsWith("/ws/CDS/defra/alvsclearanceinbound/v1");
+    }
+    
+    private static bool IsAlvsIpaffsSearchRequest(HttpContext context)
+    {
+        return context.Request.Path.HasValue
+               && (
+                   context.Request.Path.Value.EndsWith("/sanco/traces_ws/searchCertificate")
+                   || context.Request.Path.Value.EndsWith("/sanco/traces_ws/pollSearchCertificateResult")
+                );
+    }
+    
+    private static bool ContainsTimeoutRequest(string? requestContent)
+    {
+        // Looks for a raw string containing the opening of the UserIdentification element with the value of 'Timeout', whilst ignoring any namespacing in the element tag
+        return requestContent?.Contains("UserIdentification>Timeout") ?? false;
     }
 
     private static string GetContent(string? contentType)
